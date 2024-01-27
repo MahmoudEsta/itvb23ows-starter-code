@@ -81,6 +81,25 @@ class Board {
         return min($this->len($board[$common[0]]), $this->len($board[$common[1]])) <= max($this->len($board[$from]), $this->len($board[$to]));
     }
 
+    public function hasNoNeighbours($board, $to): bool
+    {
+        $offset = $this->offset;
+        $b = explode(',', $to);
+        $counter = 0;
+        foreach ($offset as $ps)
+        {
+            $p = $b[0] + $ps[0];
+            $q = $b[1] + $ps[1];
+            $position = $p . "," . $q;
+            if (isset($board[$position])){$counter = $counter + 1;}
+        }
+
+        if ($counter == 0){
+            return true;
+        }
+        return false;
+    }
+
     private function isNeighbour($a, $b): bool
     {
         $a = explode(',', $a);
