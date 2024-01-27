@@ -121,6 +121,90 @@ class moveControllerTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testValidateSpiderHappyFlow()
+    {
+        [$database, $board, $boardArray] = $this->setUpSpider();
+        $from = '2,3';
+        $to = '3,0';
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        // Act (perform the action to be tested)
+        $result = $moveController->validateSpiderMove($boardArray);
+
+        // Assert (check the result)
+        $this->assertTrue($result);
+    }
+
+    public function testValidateSpiderSecondHappyFlow()
+    {
+        [$database, $board, $boardArray] = $this->setUpSpider();
+        $from = '2,3';
+        $to = '-1,4';
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        // Act (perform the action to be tested)
+        $result = $moveController->validateSpiderMove($boardArray);
+
+        // Assert (check the result)
+        $this->assertTrue($result);
+    }
+
+    public function testValidateSpiderToTheSamePlace()
+    {
+        [$database, $board, $boardArray] = $this->setUpSpider();
+        $from = '2,3';
+        $to = '2,3';
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        // Act (perform the action to be tested)
+        $result = $moveController->validateSpiderMove($boardArray);
+
+        // Assert (check the result)
+        $this->assertFalse($result);
+    }
+
+    public function testValidateSpiderNotConnectedToHive()
+    {
+        [$database, $board, $boardArray] = $this->setUpSpider();
+        $from = '2,3';
+        $to = '4,2';
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        // Act (perform the action to be tested)
+        $result = $moveController->validateSpiderMove($boardArray);
+
+        // Assert (check the result)
+        $this->assertTrue($result);
+    }
+
+    public function testValidateSpiderVisitSamePlace()
+    {
+        [$database, $board, $boardArray] = $this->setUpSpider();
+        $from = '2,3';
+        $to = '1,4';
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        // Act (perform the action to be tested)
+        $result = $moveController->validateSpiderMove($boardArray);
+
+        // Assert (check the result)
+        $this->assertTrue($result);
+    }
+
+    public function testValidateSpiderLessThanThreeSteps()
+    {
+        [$database, $board, $boardArray] = $this->setUpSpider();
+        $from = '2,3';
+        $to = '2,1';
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        // Act (perform the action to be tested)
+        $result = $moveController->validateSpiderMove($boardArray);
+
+        // Assert (check the result)
+        $this->assertTrue($result);
+    }
+
     private function setUpGrassShopper(): array
     {
         $database = new DatabaseServiceMock();
@@ -179,6 +263,48 @@ class moveControllerTest extends TestCase
             ],
             '2,0' => [
                 0 => [1, 'B']
+            ],
+        ];
+        $board = new Board($boardArray);
+        return [$database, $board, $boardArray];
+    }
+
+    private function setUpSpider(): array
+    {
+        $database = new DatabaseServiceMock();
+        $_SESSION = [
+            'player' => 1,
+            'hand' => [
+                1 => ['A', 'S'],
+            ],
+        ];
+        $boardArray = [
+            '0,0' => [
+                0 => [0, 'Q']
+            ],
+            '0,1' => [
+                0 => [1, 'Q']
+            ],
+            '1,-1' => [
+                0 => [0, 'B']
+            ],
+            '1,1' => [
+                0 => [1, 'B']
+            ],
+            '2,0' => [
+                0 => [1, 'B']
+            ],
+            '1,3' => [
+                0 => [0, 'B']
+            ],
+            '1,2' => [
+                0 => [0, 'A']
+            ],
+            '0,3' => [
+                0 => [0, 'G']
+            ],
+            '2,3' => [
+                0 => [0, 'S']
             ],
         ];
         $board = new Board($boardArray);
