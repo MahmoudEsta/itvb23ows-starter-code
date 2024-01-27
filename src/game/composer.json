@@ -6,7 +6,9 @@
     "psr-4": {
       "controllers\\": "./controllers",
       "objects\\": "./objects",
-      "database\\": "./database"
+      "database\\": "./database",
+      "test\\mocks\\": "./test/mocks",
+      "test\\controllers\\": "./test/controllers"
     }
   }
 }

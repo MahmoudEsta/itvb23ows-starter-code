@@ -34,9 +34,9 @@
         header('Location: ./index.php');
     }
 
-if(array_key_exists('test', $_POST)) {
-    var_dump($_SESSION['board']);
-}
+    if(array_key_exists('test', $_POST)) {
+        var_dump($_SESSION['board']);
+    }
 
     // Handle 'Undo' button press
     if(array_key_exists('undo', $_POST)) {
@@ -59,7 +59,6 @@ if(array_key_exists('test', $_POST)) {
 
         header('Location: ./index.php');
     }
-
     // Handle 'Move' button press
     if(array_key_exists('move', $_POST) && isset($_POST['from'])) {
         $from = $_POST['from'];
@@ -185,7 +184,7 @@ if(array_key_exists('test', $_POST)) {
             <input type="submit" name="undo" value="Undo">
         </form>
         <form method="post">
-            <input type="submit" name="test" value="Test">
+            <input type="submit" name="test" value="Print">
         </form>
     </body>
 </html>

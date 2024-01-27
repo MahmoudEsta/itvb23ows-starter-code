@@ -49,9 +49,9 @@ class Board {
         return false;
     }
 
-    public function neighboursAreSameColor($player, $to): bool
+    public function neighboursAreSameColor($player, $to, $board): bool
     {
-        foreach ($this->board as $b => $st) {
+        foreach ($board as $b => $st) {
             if (!$st) continue;
             $c = $st[count($st) - 1][0];
             if ($c != $player && $this->isNeighbour($to, $b)) return false;

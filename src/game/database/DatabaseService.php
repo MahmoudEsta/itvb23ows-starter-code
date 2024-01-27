@@ -74,6 +74,7 @@ class DatabaseService
 
     public function deleteMove($id) {
         $stmt = $this->db->prepare('DELETE FROM moves WHERE id = '. $id);
+
         $stmt->execute();
     }
 
