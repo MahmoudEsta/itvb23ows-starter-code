@@ -174,7 +174,7 @@ class moveControllerTest extends TestCase
         $result = $moveController->validateSpiderMove($boardArray);
 
         // Assert (check the result)
-        $this->assertTrue($result);
+        $this->assertFalse($result);
     }
 
     public function testValidateSpiderVisitSamePlace()
@@ -188,7 +188,7 @@ class moveControllerTest extends TestCase
         $result = $moveController->validateSpiderMove($boardArray);
 
         // Assert (check the result)
-        $this->assertTrue($result);
+        $this->assertFalse($result);
     }
 
     public function testValidateSpiderLessThanThreeSteps()
@@ -202,7 +202,7 @@ class moveControllerTest extends TestCase
         $result = $moveController->validateSpiderMove($boardArray);
 
         // Assert (check the result)
-        $this->assertTrue($result);
+        $this->assertFalse($result);
     }
 
     private function setUpGrassShopper(): array

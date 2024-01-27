@@ -69,6 +69,14 @@ class MoveController
                                 $_SESSION['error'] = 'Soldier Ant can not fit';
                             }
                         }
+                    } elseif ($tile[1] == "S"){
+                        if (!$this->validateSpiderMove($this->board->getBoard())){
+                            $_SESSION['error'] = 'Unvalid move for Spider';
+                        }else {
+                            if (!$this->canSlide($this->board->getBoard(), $this->to)){
+                                $_SESSION['error'] = 'Spider can not fit';
+                            }
+                        }
                     }
                 }
 
@@ -207,25 +215,67 @@ class MoveController
         return false;
     }
 
-    private function getDirection($fromExploded, $toExploded): ?array
-    {
-        $from0 = $fromExploded[0];
-        $from1 = $fromExploded[1];
-        $to0 = $toExploded[0];
-        $to1 = $toExploded[1];
+    public function validateSpiderMove($board): bool {
+        unset($board[$this->from]);
+        $visited = [];
+        $tiles = [$this->from];
+        $tiles[] = null;
+        $prevTile = null;
+        $depth = 0;
 
-        $differenceFrom = abs($from0 - $from1);
-        $differenceTo = abs($to0 - $to1);
-
-        if ($from0 == $to0){
-            return $to1 > $from1 ? [0, 1] : [0, -1];
-        }elseif ($from1 == $to1){
-            return $to0 > $from0 ? [1, 0] : [-1, 0];
-        }elseif ($differenceFrom == $differenceTo){
-            return $to1 > $from1 ? [-1, 1] : [1, -1];
-        }else {
-            return null;
+        if ($this->from == $this->to) {
+            $_SESSION['error'] = 'A Spider can not jump in the same place';
+            return false;
         }
+
+        if ($this->board->hasNoNeighbours($board, $this->to)){return false;}
+
+        while (!empty($tiles) && $depth < 3) {
+            $currentTile = array_shift($tiles);
+
+            // Null is added to $tiles array to indicate an increase in depth
+            if ($currentTile == null) {
+                $depth++;
+                $tiles[] = null;
+
+                if (reset($tiles) == null) {
+                    // Double null = all nodes have been visited
+                    break;
+                } else {
+                    continue;
+                }
+            }
+
+            if (!in_array($currentTile, $visited)) {
+                $visited[] = $currentTile;
+            }
+
+            $b = explode(',', $currentTile);
+
+            // Put all adjacent legal board positions relative to the current tile in $tiles array
+            foreach ($this->board->getOffset() as $pq) {
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+                $position = $p . "," . $q;
+
+                if (
+                    !in_array($position, $visited) &&
+                    $position != $prevTile &&
+                    !isset($board[$position]) &&
+                    $this->board->hasNeighbour($position, $board)
+                ) {
+                    if ($position == $this->to && $depth == 2) {
+                        return true;
+                    }
+
+                    $tiles[] = $position;
+                }
+            }
+
+            $prevTile = $currentTile;
+        }
+
+        return false;
     }
 
     public function canSlide($board, $to): bool
@@ -245,6 +295,27 @@ class MoveController
             return false;
         }
         return true;
+    }
+
+    private function getDirection($fromExploded, $toExploded): ?array
+    {
+        $from0 = $fromExploded[0];
+        $from1 = $fromExploded[1];
+        $to0 = $toExploded[0];
+        $to1 = $toExploded[1];
+
+        $differenceFrom = abs($from0 - $from1);
+        $differenceTo = abs($to0 - $to1);
+
+        if ($from0 == $to0){
+            return $to1 > $from1 ? [0, 1] : [0, -1];
+        }elseif ($from1 == $to1){
+            return $to0 > $from0 ? [1, 0] : [-1, 0];
+        }elseif ($differenceFrom == $differenceTo){
+            return $to1 > $from1 ? [-1, 1] : [1, -1];
+        }else {
+            return null;
+        }
     }
 
 }
