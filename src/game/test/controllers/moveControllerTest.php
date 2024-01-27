@@ -71,7 +71,7 @@ class moveControllerTest extends TestCase
         $moveController = new MoveController($from, $to, $board, $database);
 
         // Act (perform the action to be tested)
-        $result = $moveController->validateGrasshopperMove($boardArray);
+        $result = $moveController->validateSoldierAntMove($boardArray);
 
         // Assert (check the result)
         $this->assertTrue($result);
@@ -100,7 +100,9 @@ class moveControllerTest extends TestCase
 
         // Act (perform the action to be tested)
         $result = $moveController->validateSoldierAntMove($boardArray);
-
+        if ($result){
+            $result = $moveController->canSlide($boardArray, $to);
+        }
         // Assert (check the result)
         $this->assertFalse($result);
     }
@@ -156,7 +158,7 @@ class moveControllerTest extends TestCase
         $_SESSION = [
             'player' => 1,
             'hand' => [
-                1 => ['piece1', 'piece2'],
+                1 => ['A', 'S'],
             ],
         ];
         $boardArray = [

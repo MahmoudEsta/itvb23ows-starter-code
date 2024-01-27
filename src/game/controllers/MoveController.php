@@ -61,6 +61,14 @@ class MoveController
                         if (!$this->validateGrasshopperMove($this->board->getBoard())){
                             $_SESSION['error'] = 'Unvalid move for Grassshopper';
                         }
+                    } elseif ($tile[1] == "A"){
+                        if (!$this->validateSoldierAntMove($this->board->getBoard())){
+                            $_SESSION['error'] = 'Unvalid move for Soldier Ant';
+                        }else {
+                            if (!$this->canSlide($this->board->getBoard(), $this->to)){
+                                $_SESSION['error'] = 'Soldier Ant can not fit';
+                            }
+                        }
                     }
                 }
 
@@ -151,6 +159,54 @@ class MoveController
         return false;
     }
 
+    public function validateSoldierAntMove($board): bool
+    {
+        if ($this->from == $this->to) {
+            $_SESSION['error'] = 'A Soldier Ant can not jump in the same place';
+            return false;
+        }
+
+        if ($this->board->hasNoNeighbours($board, $this->to)){return false;}
+
+        // Remove $from tile from board array
+        unset($board[$this->from]);
+
+        $visited = [];
+        $tiles = array($this->from);
+
+        // Find if path exists between $from and $to using DFS
+        while (!empty($tiles)) {
+            $currentTile = array_shift($tiles);
+
+            if (!in_array($currentTile, $visited)) {
+                $visited[] = $currentTile;
+            }
+
+            $b = explode(',', $currentTile);
+
+            // Put all adjacent legal board positions relative to current tile in $tiles array
+            foreach ($this->board->getOffset() as $pq) {
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+
+                $position = $p . "," . $q;
+
+                if (
+                    !in_array($position, $visited) &&
+                    !isset($board[$position]) &&
+                    $this->board->hasNeighbour($position, $board)
+                ) {
+                    if ($position == $this->to) {
+                        return true;
+                    }
+                    $tiles[] = $position;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private function getDirection($fromExploded, $toExploded): ?array
     {
         $from0 = $fromExploded[0];
@@ -170,6 +226,25 @@ class MoveController
         }else {
             return null;
         }
+    }
+
+    public function canSlide($board, $to): bool
+    {
+        $offset = $this->board->getOffset();
+        $b = explode(',', $to);
+        $counter = 0;
+        foreach ($offset as $ps)
+        {
+            $p = $b[0] + $ps[0];
+            $q = $b[1] + $ps[1];
+            $position = $p . "," . $q;
+            if (isset($board[$position])){$counter = $counter + 1;}
+        }
+
+        if ($counter >= 5){
+            return false;
+        }
+        return true;
     }
 
 }
