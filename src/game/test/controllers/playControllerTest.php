@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use test\mocks\DatabaseServiceMock;
 use function PHPUnit\Framework\assertArrayNotHasKey;
 use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertStringContainsString;
 
 class playControllerTest extends TestCase
 {
@@ -119,5 +120,31 @@ class playControllerTest extends TestCase
         $playController->noValidPlays();
 
         assertArrayNotHasKey("error", $_SESSION);
+    }
+
+    public function testNoPlayWhenGameEnd()
+    {
+        $database = new DatabaseServiceMock();
+        $_SESSION = [
+            'player' => 0,
+            'endGame' => true,
+            'hand' => [
+                0 => ["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0]
+            ],
+        ];
+        $boardArray = [
+            '0,0' => [
+                0 => [0, 'B']
+            ],
+            '0,1' => [
+                0 => [1, 'Q']
+            ]
+        ];
+        $board = new Board($boardArray);
+        $playController = new PlayController("B", "0,0", $board, $database);
+
+        $playController->executePlay();
+
+        assertStringContainsString('Restart the game to play again', $_SESSION['error']);
     }
 }

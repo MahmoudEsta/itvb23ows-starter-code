@@ -7,6 +7,7 @@ use objects\Board;
 use PHPUnit\Framework\TestCase;
 use test\mocks\DatabaseServiceMock;
 use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertStringContainsString;
 
 class moveControllerTest extends TestCase
 {
@@ -364,6 +365,34 @@ class moveControllerTest extends TestCase
 
         assertNotNull($_SESSION["error"]);
 
+    }
+
+    public function testNoPlayWhenGameEnd()
+    {
+        $database = new DatabaseServiceMock();
+        $_SESSION = [
+            'player' => 0,
+            'endGame' => true,
+            'hand' => [
+                0 => ["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0]
+            ],
+        ];
+        $from = '0,0';
+        $to = '0,0';
+        $boardArray = [
+            '0,0' => [
+                0 => [0, 'B']
+            ],
+            '0,1' => [
+                0 => [1, 'Q']
+            ]
+        ];
+        $board = new Board($boardArray);
+        $moveController = new MoveController($from, $to, $board, $database);
+
+        $moveController->executeMove();
+
+        assertStringContainsString('Restart the game to play again', $_SESSION['error']);
     }
 
     private function setUpGrassShopper(): array
