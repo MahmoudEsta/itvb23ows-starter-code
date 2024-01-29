@@ -40,6 +40,7 @@ class Player {
     public function getAvailableHandPieces(): array
     {
         $hand = $this->hand[$this->playerNumber];
+        $pieces = [];
 
         foreach ($hand as $tile => $ct) {
             if ($ct > 0) {

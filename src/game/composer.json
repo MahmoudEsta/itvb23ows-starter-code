@@ -8,7 +8,8 @@
       "objects\\": "./objects",
       "database\\": "./database",
       "test\\mocks\\": "./test/mocks",
-      "test\\controllers\\": "./test/controllers"
+      "test\\controllers\\": "./test/controllers",
+      "test\\objects\\": "./test/objects"
     }
   }
 }

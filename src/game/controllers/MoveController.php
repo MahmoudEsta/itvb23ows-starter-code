@@ -30,77 +30,31 @@ class MoveController
         unset($_SESSION['error']);
 
         $board = $this->board->getBoard();
-        if (!isset($board[$this->from])) {
-            $_SESSION['error'] = 'Board position is empty';
-        } elseif ($board[$this->from][count($board[$this->from])-1][0] != $this->player) {
-            $_SESSION['error'] = "Tile is not owned by player";
-        } elseif ($this->hand['Q']) {
-            $_SESSION['error'] = "Queen bee is not played";
-        } elseif (!$this->board->hasNeighBour($this->to, $board)) {
-            $_SESSION['error'] = "Move would split hive";
-        }else {
-            if (count($board[$this->from]) > 1){
-                $tile = array_pop($board[$this->from]);}
-            else{
-                $tile = array_pop($board[$this->from]);
-                unset($board[$this->from]);
-            }
-            $all = $this->getSplitTiles($board);
-                if ($all) {
-                    $_SESSION['error'] = "Move would split hive";
-                } else {
-                    if ($this->from == $this->to) {
-                        $_SESSION['error'] = 'Tile must move';
-                    } elseif (isset($board[$this->to]) && $tile[1] != "B") {
-                        $_SESSION['error'] = 'Tile not empty';
-                    } elseif ($tile[1] == "Q" || $tile[1] == "B") {
-                        if (!$this->board->slide($this->from, $this->to, $this->board->getBoard())) {
-                            $_SESSION['error'] = 'Tile must slide';
-                        }
-                    } elseif ($tile[1] == "G"){
-                        if (!$this->validateGrasshopperMove($this->board->getBoard())){
-                            $_SESSION['error'] = 'Unvalid move for Grassshopper';
-                        }
-                    } elseif ($tile[1] == "A"){
-                        if (!$this->validateSoldierAntMove($this->board->getBoard())){
-                            $_SESSION['error'] = 'Unvalid move for Soldier Ant';
-                        }else {
-                            if (!$this->canSlide($this->board->getBoard(), $this->to)){
-                                $_SESSION['error'] = 'Soldier Ant can not fit';
-                            }
-                        }
-                    } elseif ($tile[1] == "S"){
-                        if (!$this->validateSpiderMove($this->board->getBoard())){
-                            $_SESSION['error'] = 'Unvalid move for Spider';
-                        }else {
-                            if (!$this->canSlide($this->board->getBoard(), $this->to)){
-                                $_SESSION['error'] = 'Spider can not fit';
-                            }
-                        }
-                    }
-                }
-
-            // zet de from terug in je bord
-            if (isset($_SESSION['error'])) {
-                if (isset($board[$this->from])) {
-                    array_push($board[$this->from], $tile);
-                } else {
-                    $board[$this->from] = [$tile];
-                }
-            // move from to to als er geen fouten zijn
-            } else {
-                if (isset($board[$this->to])) {
-                    array_push($board[$this->to], $tile);
-                } else {
-                    $board[$this->to] = [$tile];
-                }
-
-                $_SESSION['player'] = 1 - $_SESSION['player'];
-                $lastMove = $this->database->move($_SESSION['game_id'], $this->from, $this->to, $_SESSION['last_move']);
-                $_SESSION['last_move'] = $lastMove;
-            }
+        if (count($board[$this->from]) > 1) {
+            $tile = array_pop($board[$this->from]);
+        } else {
+            $tile = array_pop($board[$this->from]);
+            unset($board[$this->from]);
         }
-
+        $this->validateMove($this->from, $this->to);
+        if (isset($_SESSION['error'])) {
+            // zet de from terug in je bord
+            if (isset($board[$this->from])) {
+                array_push($board[$this->from], $tile);
+            } else {
+                $board[$this->from] = [$tile];
+            }
+            // move from to to als er geen fouten zijn
+        } else {
+            if (isset($board[$this->to])) {
+                array_push($board[$this->to], $tile);
+            } else {
+                $board[$this->to] = [$tile];
+            }
+            $_SESSION['player'] = 1 - $_SESSION['player'];
+            $lastMove = $this->database->move($_SESSION['game_id'], $this->from, $this->to, $_SESSION['last_move']);
+            $_SESSION['last_move'] = $lastMove;
+        }
         $_SESSION['board'] = $board;
     }
 
@@ -297,6 +251,82 @@ class MoveController
         return true;
     }
 
+    private function validateMove($from, $to)
+    {
+        unset($_SESSION['error']);
+
+        $board = $this->board->getBoard();
+        if (!isset($board[$from])) {
+            $_SESSION['error'] = 'Board position is empty';
+        } elseif ($board[$from][count($board[$from])-1][0] != $this->player) {
+            $_SESSION['error'] = "Tile is not owned by player";
+        } elseif ($this->hand['Q']) {
+            $_SESSION['error'] = "Queen bee is not played";
+        } elseif (!$this->board->hasNeighBour($to, $board)) {
+            $_SESSION['error'] = "Move would split hive";
+        } else {
+            if (count($board[$from]) > 1) {
+                $tile = array_pop($board[$from]);
+            } else {
+                $tile = array_pop($board[$from]);
+                unset($board[$from]);
+            }
+            $all = $this->getSplitTiles($board);
+            if ($all) {
+                $_SESSION['error'] = "Move would split hive";
+            } else {
+                if ($from == $to) {
+                    $_SESSION['error'] = 'Tile must move';
+                } elseif (isset($board[$to]) && $tile[1] != "B") {
+                    $_SESSION['error'] = 'Tile not empty';
+                } elseif ($tile[1] == "Q" || $tile[1] == "B") {
+                    if (!$this->board->slide($from, $to, $this->board->getBoard())) {
+                        $_SESSION['error'] = 'Tile must slide';
+                    }
+                } elseif ($tile[1] == "G") {
+                    if (!$this->validateGrasshopperMove($this->board->getBoard())) {
+                        $_SESSION['error'] = 'Unvalid move for Grassshopper';
+                    }
+                } elseif ($tile[1] == "A") {
+                    if (!$this->validateSoldierAntMove($this->board->getBoard())) {
+                        $_SESSION['error'] = 'Unvalid move for Soldier Ant';
+                    } else {
+                        if (!$this->canSlide($this->board->getBoard(), $this->to)) {
+                            $_SESSION['error'] = 'Soldier Ant can not fit';
+                        }
+                    }
+                } elseif ($tile[1] == "S") {
+                    if (!$this->validateSpiderMove($this->board->getBoard())) {
+                        $_SESSION['error'] = 'Unvalid move for Spider';
+                    } else {
+                        if (!$this->canSlide($this->board->getBoard(), $to)) {
+                            $_SESSION['error'] = 'Spider can not fit';
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function noValidMoves()
+    {
+        $board = $this->board->getBoard();
+        $possiblePositions = $this->board->getPossiblePositions();
+        foreach ($board as $pos => $tiles) {
+            $topTile = end($tiles);
+
+            if ($topTile[0] == $this->player) {
+                foreach ($possiblePositions as $to) {
+                    $this->validateMove($pos, $to);
+                    if (!isset($_SESSION["error"])) {
+                        $_SESSION['error'] = 'You can still move '.$pos;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     private function getDirection($fromExploded, $toExploded): ?array
     {
         $from0 = $fromExploded[0];
@@ -304,8 +334,8 @@ class MoveController
         $to0 = $toExploded[0];
         $to1 = $toExploded[1];
 
-        $differenceFrom = abs($from0 - $from1);
-        $differenceTo = abs($to0 - $to1);
+        $differenceFrom = abs($from0 - $to0);
+        $differenceTo = abs($from1 - $to1);
 
         if ($from0 == $to0){
             return $to1 > $from1 ? [0, 1] : [0, -1];
