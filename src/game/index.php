@@ -26,6 +26,12 @@
     $player = new Player($_SESSION['player'] ,$hand);
     $game = new Game($player, $board, $_SESSION['game_id']);
 
+    $whiteLost = $game->getBoard()->lostGame($game->getBoard()->getBoard(), $_SESSION['white_queen']);
+    $blackLost = $game->getBoard()->lostGame($game->getBoard()->getBoard(), $_SESSION['black_queen']);
+    if ($whiteLost || $blackLost){
+        $_SESSION['endGame'] = true;
+    }
+
     // Handle 'Pass' button press
     if(array_key_exists('pass', $_POST)) {
         $passController = new passController($database);
@@ -41,7 +47,7 @@
     }
 
     if(array_key_exists('test', $_POST)) {
-        var_dump($_SESSION['board']);
+        var_dump($_SESSION['endGame']);
     }
 
     // Handle 'Undo' button press
@@ -112,6 +118,19 @@
                 }
             ?>
         </div>
+        <h1 class="gameStatus">
+            <?php
+            if ($whiteLost && $blackLost) {
+                echo "Draw!";
+            } else {
+                if ($whiteLost) {
+                    echo "Black wins!";
+                } elseif ($blackLost) {
+                    echo "White wins!";
+                }
+            }
+            ?>
+        </h1>
         <div class="hand">
             White:
             <?php

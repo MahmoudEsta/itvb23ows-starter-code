@@ -112,6 +112,26 @@ class Board {
         return false;
     }
 
+    public function lostGame($board, $to): bool
+    {
+        if ($to == null) {return false;}
+        $offset = $this->offset;
+        $b = explode(',', $to);
+        $counter = 0;
+        foreach ($offset as $ps)
+        {
+            $p = $b[0] + $ps[0];
+            $q = $b[1] + $ps[1];
+            $position = $p . "," . $q;
+            if (isset($board[$position])){$counter = $counter + 1;}
+        }
+
+        if ($counter == 6){
+            return true;
+        }
+        return false;
+    }
+
     private function isNeighbour($a, $b): bool
     {
         $a = explode(',', $a);

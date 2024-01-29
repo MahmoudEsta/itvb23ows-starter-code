@@ -27,35 +27,48 @@ class MoveController
 
     public function executeMove()
     {
-        unset($_SESSION['error']);
 
-        $board = $this->board->getBoard();
-        if (count($board[$this->from]) > 1) {
-            $tile = array_pop($board[$this->from]);
+        if ($_SESSION['endGame']){
+            $_SESSION['error'] = "Restart the game to play again";
         } else {
-            $tile = array_pop($board[$this->from]);
-            unset($board[$this->from]);
-        }
-        $this->validateMove($this->from, $this->to);
-        if (isset($_SESSION['error'])) {
-            // zet de from terug in je bord
-            if (isset($board[$this->from])) {
-                array_push($board[$this->from], $tile);
+            unset($_SESSION['error']);
+
+            $board = $this->board->getBoard();
+            if (count($board[$this->from]) > 1) {
+                $tile = array_pop($board[$this->from]);
             } else {
-                $board[$this->from] = [$tile];
+                $tile = array_pop($board[$this->from]);
+                unset($board[$this->from]);
             }
-            // move from to to als er geen fouten zijn
-        } else {
-            if (isset($board[$this->to])) {
-                array_push($board[$this->to], $tile);
+            $this->validateMove($this->from, $this->to);
+            if (isset($_SESSION['error'])) {
+                // zet de from terug in je bord
+                if (isset($board[$this->from])) {
+                    array_push($board[$this->from], $tile);
+                } else {
+                    $board[$this->from] = [$tile];
+                }
+                // move from to to als er geen fouten zijn
             } else {
-                $board[$this->to] = [$tile];
+                if (isset($board[$this->to])) {
+                    array_push($board[$this->to], $tile);
+                } else {
+                    $board[$this->to] = [$tile];
+                    if ($tile[1] == "Q"){
+                        if ($this->player == 0) {
+                            $_SESSION['white_queen'] = $this->to;
+                        } else {
+                            $_SESSION['black_queen'] = $this->to;
+                        }
+                    }
+                }
+                $_SESSION['player'] = 1 - $_SESSION['player'];
+                $lastMove = $this->database->move($_SESSION['game_id'], $this->from, $this->to, $_SESSION['last_move']);
+                $_SESSION['last_move'] = $lastMove;
             }
-            $_SESSION['player'] = 1 - $_SESSION['player'];
-            $lastMove = $this->database->move($_SESSION['game_id'], $this->from, $this->to, $_SESSION['last_move']);
-            $_SESSION['last_move'] = $lastMove;
+
+            $_SESSION['board'] = $board;
         }
-        $_SESSION['board'] = $board;
     }
 
     private function getSplitTiles($board): array
