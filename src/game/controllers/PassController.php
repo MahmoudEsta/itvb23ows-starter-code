@@ -15,8 +15,6 @@ class PassController
 
     public function pass()
     {
-
-        unset($_SESSION['error']);
         $lastMove = $this->database->pass($_SESSION['game_id'], $_SESSION['last_move']);
         $_SESSION['last_move'] = $lastMove;
         $_SESSION['player'] = 1 - $_SESSION['player'];

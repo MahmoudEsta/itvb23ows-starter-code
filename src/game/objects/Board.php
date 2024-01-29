@@ -78,7 +78,19 @@ class Board {
         ) {
             return false;
         }
-        return min($this->len($board[$common[0]]), $this->len($board[$common[1]])) <= max($this->len($board[$from]), $this->len($board[$to]));
+        $firstCommonLen = $board[$common[0]] ?? 0;
+        $firstCommonLen = $this->len($firstCommonLen);
+
+        $secondCommonLen = $board[$common[1]] ?? 0;
+        $secondCommonLen = $this->len($secondCommonLen);
+
+        $fromLen = $board[$from] ?? 0;
+        $fromLen = $this->len($fromLen);
+
+        $toLen = $board[$to] ?? 0;
+        $toLen = $this->len($toLen);
+
+        return min($firstCommonLen, $secondCommonLen) <= max($fromLen, $toLen);
     }
 
     public function hasNoNeighbours($board, $to): bool

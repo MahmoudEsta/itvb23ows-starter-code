@@ -29,8 +29,14 @@
     // Handle 'Pass' button press
     if(array_key_exists('pass', $_POST)) {
         $passController = new passController($database);
-        $passController->pass();
-
+        unset($_SESSION['error']);
+        $moveController = new moveController("0,0", "0,0", $game->getBoard(), $database);
+        $moveController->noValidMoves();
+        $playController = new playController("0,0", "0.0", $game->getBoard(), $database);
+        $playController->noValidPlays();
+        if (!isset($_SESSION['error'])){
+            $passController->pass();
+        }
         header('Location: ./index.php');
     }
 
@@ -132,8 +138,13 @@
         <form method="post">
             <select name="piece">
                 <?php
-                    foreach ($game->getPlayer()->getAvailableHandPieces() as $piece) {
-                        echo "<option value=\"$piece\">$piece</option>";
+                    $pieces = $game->getPlayer()->getAvailableHandPieces();
+                    if ($pieces != null){
+                        foreach ($pieces as $piece) {
+                            echo "<option value=\"$piece\">$piece</option>";
+                        }
+                    } else {
+                        echo "Player has no more pieces";
                     }
                 ?>
             </select>
