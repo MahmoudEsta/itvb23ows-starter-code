@@ -18,5 +18,6 @@ class PassController
         $lastMove = $this->database->pass($_SESSION['game_id'], $_SESSION['last_move']);
         $_SESSION['last_move'] = $lastMove;
         $_SESSION['player'] = 1 - $_SESSION['player'];
+        $_SESSION['move_number'] = $_SESSION['move_number'] + 1;
     }
 }

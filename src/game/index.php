@@ -1,7 +1,8 @@
 <?php
     session_start();
 
-    use controllers\PlayController as playController;
+use controllers\AiController;
+use controllers\PlayController as playController;
     use controllers\MoveController as moveController;
     use controllers\PassController as passController;
     use controllers\RestartController as restartController;
@@ -46,9 +47,13 @@
         header('Location: ./index.php');
     }
 
-    if(array_key_exists('test', $_POST)) {
-        var_dump($_SESSION['endGame']);
+    if (array_key_exists('ai', $_POST)) {
+        $aiController = new AiController($game->getBoard(), $database);
+        $aiController->executeAiPlay();
+
+        header('Location: ./index.php');
     }
+
 
     // Handle 'Undo' button press
     if(array_key_exists('undo', $_POST)) {
@@ -214,7 +219,7 @@
             <input type="submit" name="undo" value="Undo">
         </form>
         <form method="post">
-            <input type="submit" name="test" value="Print">
+            <input type="submit" name="ai" value="AI">
         </form>
     </body>
 </html>
