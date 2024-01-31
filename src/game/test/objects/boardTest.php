@@ -1,6 +1,6 @@
 <?php
 
-namespace test;
+namespace test\objects;
 
 use objects\Board;
 use PHPUnit\Framework\TestCase;

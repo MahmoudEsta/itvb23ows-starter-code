@@ -16,90 +16,18 @@ class DatabaseServiceMock extends DatabaseService
         $this->moveTable = [];
     }
 
-    public function addMove($types, $gameId, $from, $to, $move, $state)
+    public function play($gameId, $piece, $to, $lastMove)
     {
-        $nextMoveID = count($this->moveTable) + 1;
-
-        $this->moveTable[] = [$nextMoveID, $gameId, "move", $from, $to, $move, $state];
-
-        $this->insertID = $nextMoveID;
+        $_SESSION['board'][$to] = [[1, $piece]];
     }
 
-    public function deleteMove($id) {
-        unset($this->moveTable[$id - 1]);
+    public function move($gameId, $from, $to, $lastMove){
+        unset($_SESSION['board'][$from]);
+        $_SESSION['board'][$to] = [[0 , 'Q']];
     }
-
-    public function deleteMoves($gameID) {
-        for ($i = 0; $i < count($this->moveTable); $i++) {
-            if ($this->moveTable[$i][1] == $gameID) {
-                unset($this->moveTable[$i]);
-            }
-        }
-    }
-
-    public function getMoves($gameID): object
+    public function pass($gameId, $lastMove)
     {
-        return new class($this->moveTable, $gameID)
-        {
-            private array $result;
-
-            public function __construct($moveTable, $gameID)
-            {
-                $result = [];
-                $move = [];
-                foreach ($moveTable as $move) {
-                    if ($move[1] == $gameID) {
-                        $result[] = $move;
-                    }
-                }
-
-                $this->result = $result;
-            }
-
-            // Mock mysqli_result internal function
-            public function fetch_array(): array
-            {
-                $nextRow = array_shift($this->result);
-
-                if ($nextRow != null) {
-                    return $nextRow;
-                }
-                return [];
-            }
-        };
+        return;
     }
 
-    public function getMove($id): object
-    {
-        return new class($this->moveTable, $id)
-        {
-            private array $moveTable;
-            private string $id;
-
-            public function __construct($moveTable, $id)
-            {
-                $this->moveTable = $moveTable;
-                $this->id = $id;
-            }
-
-            // Mock mysqli_result internal function
-            public function fetch_array()
-            {
-                return $this->moveTable[$this->id - 1];
-            }
-        };
-    }
-
-    public function addNewGame() {
-        $nextGameID = count($this->gameTable) + 1;
-
-        $this->gameTable[] = $nextGameID;
-
-        $this->insertID = $nextGameID;
-    }
-
-    public function getInsertID(): int
-    {
-        return $this->insertID;
-    }
 }

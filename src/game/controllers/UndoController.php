@@ -20,5 +20,6 @@ class UndoController
         $this->database->deleteMove($_SESSION['last_move']);
         $_SESSION['last_move'] = $result[5];
         $this->database->set_state($result[6]);
+        $_SESSION['move_number'] = $_SESSION['move_number'] - 1;
     }
 }

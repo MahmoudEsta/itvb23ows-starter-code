@@ -7,6 +7,7 @@ services:
       - "8000:80"
     depends_on:
       - db
+      - ai
 
   db:
     container_name: hive-db
@@ -18,3 +19,10 @@ services:
       - "3306:3306"
     volumes:
       - ./database:/docker-entrypoint-initdb.d
+
+
+  ai:
+    build: ./ai/
+    container_name: hive-ai
+    ports:
+      - "5000:5000"
