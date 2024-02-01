@@ -40,7 +40,7 @@ class DatabaseService
         return $this->db->insert_id;
     }
 
-    public function undo($lastMove)
+    public function getLastMove($lastMove)
     {
         $stmt = $this->db->prepare('SELECT * FROM moves WHERE id = ' . $lastMove);
         $stmt->execute();
