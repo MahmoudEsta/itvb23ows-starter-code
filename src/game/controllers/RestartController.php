@@ -17,7 +17,8 @@ class RestartController
     {
         unset($_SESSION['error']);
         $_SESSION['board'] = [];
-        $_SESSION['hand'] = [0 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3], 1 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3]];
+        $_SESSION['hand'] = [0 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3],
+                             1 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3]];
         $_SESSION['player'] = 0;
         $_SESSION['move_number'] = 0;
         unset($_SESSION['white_queen']);

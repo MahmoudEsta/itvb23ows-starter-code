@@ -6,14 +6,10 @@ use database\DatabaseService;
 
 class DatabaseServiceMock extends DatabaseService
 {
-    private array $gameTable;
-    private array $moveTable;
-    private int $insertID;
 
     public function __construct()
     {
-        $this->gameTable = [];
-        $this->moveTable = [];
+
     }
 
     public function play($gameId, $piece, $to, $lastMove)

@@ -52,17 +52,17 @@ class Board {
     public function neighboursAreSameColor($player, $to, $board): bool
     {
         foreach ($board as $b => $st) {
-            if (!$st) continue;
+            if (!$st) {continue;}
             $c = $st[count($st) - 1][0];
-            if ($c != $player && $this->isNeighbour($to, $b)) return false;
+            if ($c != $player && $this->isNeighbour($to, $b)) {return false;}
         }
         return true;
     }
 
     public function slide($from, $to, $board): bool
     {
-        if (!$this->hasNeighbour($to, $board)) return false;
-        if (!$this->isNeighbour($from, $to)) return false;
+        if (!$this->hasNeighbour($to, $board)) {return false;}
+        if (!$this->isNeighbour($from, $to)) {return false;}
         $b = explode(',', $to);
         $common = [];
         foreach ($this->offset as $pq) {
@@ -136,9 +136,9 @@ class Board {
     {
         $a = explode(',', $a);
         $b = explode(',', $b);
-        if ($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) return true;
-        if ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1) return true;
-        if ($a[0] + $a[1] == $b[0] + $b[1]) return true;
+        if ($a[0] == $b[0] && abs($a[1] - $b[1]) == 1) {return true;}
+        if ($a[1] == $b[1] && abs($a[0] - $b[0]) == 1) {return true;}
+        if ($a[0] + $a[1] == $b[0] + $b[1]) {return true;}
         return false;
     }
 
@@ -147,5 +147,3 @@ class Board {
         return $tile ? count($tile) : 0;
     }
 }
-
-?>

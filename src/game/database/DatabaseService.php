@@ -12,12 +12,12 @@ class DatabaseService
         $this->db = new mysqli('hive-db', 'root', 'EstaCR7', 'hive');
     }
 
-    private function get_state(): string
+    private function getState(): string
     {
         return serialize([$_SESSION['hand'], $_SESSION['board'], $_SESSION['player']]);
     }
 
-    public function set_state($state)
+    public function setState($state)
     {
         list($a, $b, $c) = unserialize($state);
         $_SESSION['hand'] = $a;
@@ -27,7 +27,7 @@ class DatabaseService
 
     public function pass($gameId, $lastMove)
     {
-        $state = $this->get_state();
+        $state = $this->getState();
         $stmt = $this->db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state) VALUES (?, "pass", null, null, ?, ?)');
         $stmt->bind_param('iss', $gameId, $lastMove, $state);
         $stmt->execute();
@@ -49,7 +49,7 @@ class DatabaseService
 
     public function move($gameId, $from, $to, $lastMove)
     {
-        $state = $this->get_state();
+        $state = $this->getState();
         $stmt = $this->db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state) VALUES (?, "move", ?, ?, ?, ?)');
         $stmt->bind_param('issis', $gameId, $from, $to, $lastMove, $state);
         $stmt->execute();
@@ -58,7 +58,7 @@ class DatabaseService
 
     public function play($gameId, $piece, $to, $lastMove)
     {
-        $state = $this->get_state();
+        $state = $this->getState();
         $stmt = $this->db->prepare('INSERT INTO moves (game_id, type, move_from, move_to, previous_id, state) VALUES (?, "play", ?, ?, ?, ?)');
         $stmt->bind_param('issis', $gameId, $piece, $to, $lastMove, $state);
         $stmt->execute();

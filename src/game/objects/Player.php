@@ -63,27 +63,4 @@ class Player {
         return $from;
     }
 
-    function getPossiblePositionsForPlayer(Board $board)
-    {
-        $to = [];
-        foreach ($board->getOffset() as $pq) {
-            foreach (array_keys($board->getBoard()) as $pos) {
-                $pq2 = explode(',', $pos);
-                if ($pq[0] + $pq2[0] === $this->playerNumber) {
-                    $position = ($pq[0] + $pq2[0]) . ',' . ($pq[1] + $pq2[1]);
-                    if (!isset($board->getBoard()[$position])) {
-                        $to[] = $position;
-                    }
-                }
-            }
-        }
-
-        $to = array_unique($to);
-        if (!count($to)) $to[] = '0,0';
-
-        return $to;
-    }
-
 }
-
-?>

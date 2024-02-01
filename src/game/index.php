@@ -1,8 +1,8 @@
 <?php
     session_start();
 
-use controllers\AiController;
-use controllers\PlayController as playController;
+    use controllers\AiController;
+    use controllers\PlayController as playController;
     use controllers\MoveController as moveController;
     use controllers\PassController as passController;
     use controllers\RestartController as restartController;
@@ -16,6 +16,7 @@ use controllers\PlayController as playController;
 
     $database = new DatabaseService();
     $restartController = new restartController($database);
+    $locationIndex = 'Location: ./index.php';
 
     // Handle 'Restart' button press and unset board (initial condition)
     if (array_key_exists('restart', $_POST) || $_SESSION['board'] == null) {
@@ -44,14 +45,14 @@ use controllers\PlayController as playController;
         if (!isset($_SESSION['error'])){
             $passController->pass();
         }
-        header('Location: ./index.php');
+        header($locationIndex);
     }
 
     if (array_key_exists('ai', $_POST)) {
         $aiController = new AiController($game->getBoard(), $database);
         $aiController->executeAiPlay();
 
-        header('Location: ./index.php');
+        header($locationIndex);
     }
 
 
@@ -63,7 +64,7 @@ use controllers\PlayController as playController;
             $game->getPlayer()->switchPlayer();
         }
 
-        header('Location: ./index.php');
+        header($locationIndex);
     }
 
     // Handle 'Play' button press
@@ -74,7 +75,7 @@ use controllers\PlayController as playController;
         $playController = new playController($piece, $to, $game->getBoard(), $database);
         $playController->executePlay();
 
-        header('Location: ./index.php');
+        header($locationIndex);
     }
     // Handle 'Move' button press
     if(array_key_exists('move', $_POST) && isset($_POST['from'])) {
@@ -84,13 +85,13 @@ use controllers\PlayController as playController;
         $moveController = new moveController($from, $to, $game->getBoard(), $database);
         $moveController->executeMove();
 
-        header('Location: ./index.php');
+        header($locationIndex);
     }
 
     $to = $game->getBoard()->getPossiblePositions();
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Hive</title>
         <link rel="stylesheet" type="text/css" href="./css/default.css">
@@ -102,8 +103,8 @@ use controllers\PlayController as playController;
                 $min_q = 1000;
                 foreach ($game->getBoard()->getBoard() as $pos => $tile) {
                     $pq = explode(',', $pos);
-                    if ($pq[0] < $min_p) $min_p = $pq[0];
-                    if ($pq[1] < $min_q) $min_q = $pq[1];
+                    if ($pq[0] < $min_p) {$min_p = $pq[0];}
+                    if ($pq[1] < $min_q) {$min_q = $pq[1];}
                 }
                 foreach (array_filter($game->getBoard()->getBoard()) as $pos => $tile) {
                     $pq = explode(',', $pos);
@@ -112,7 +113,7 @@ use controllers\PlayController as playController;
                     $h = count($tile);
                     echo '<div class="tile player';
                     echo $tile[$h-1][0];
-                    if ($h > 1) echo ' stacked';
+                    if ($h > 1) {echo ' stacked';}
                     echo '" style="left: ';
                     echo ($pq[0] - $min_p) * 4 + ($pq[1] - $min_q) * 2;
                     echo 'em; top: ';
@@ -157,7 +158,7 @@ use controllers\PlayController as playController;
             ?>
         </div>
         <div class="turn">
-            Turn: <?php if ($game->getPlayer()->getPlayerNumber() == 0) echo "White"; else echo "Black"; ?>
+            Turn: <?php if ($game->getPlayer()->getPlayerNumber() == 0) {echo "White";} else {echo "Black";} ?>
         </div>
         <form method="post">
             <select name="piece">
@@ -205,7 +206,7 @@ use controllers\PlayController as playController;
             <input type="submit" name="restart" value="Restart">
         </form>
         <strong>
-            <?php if (isset($_SESSION['error'])) echo($_SESSION['error']);?>
+            <?php if (isset($_SESSION['error'])) {echo $_SESSION['error'];}?>
         </strong>
         <ol>
             <?php

@@ -27,7 +27,6 @@ class MoveController
 
     public function executeMove()
     {
-
         if ($_SESSION['endGame']){
             $_SESSION['error'] = "Restart the game to play again";
         } else {
@@ -42,33 +41,14 @@ class MoveController
             }
             $this->validateMove($this->from, $this->to);
             if (isset($_SESSION['error'])) {
-                // zet de from terug in je bord
                 if (isset($board[$this->from])) {
                     array_push($board[$this->from], $tile);
                 } else {
                     $board[$this->from] = [$tile];
                 }
-                // move from to to als er geen fouten zijn
             } else {
                 $board = $this->moveWithoutAnyValidation($board, $this->to, $tile);
-//                if (isset($board[$this->to])) {
-//                    array_push($board[$this->to], $tile);
-//                } else {
-//                    $board[$this->to] = [$tile];
-//                    $_SESSION['move_number'] = $_SESSION['move_number'] + 1;
-//                    if ($tile[1] == "Q"){
-//                        if ($this->player == 0) {
-//                            $_SESSION['white_queen'] = $this->to;
-//                        } else {
-//                            $_SESSION['black_queen'] = $this->to;
-//                        }
-//                    }
-//                }
-//                $_SESSION['player'] = 1 - $_SESSION['player'];
-//                $lastMove = $this->database->move($_SESSION['game_id'], $this->from, $this->to, $_SESSION['last_move']);
-//                $_SESSION['last_move'] = $lastMove;
             }
-
             $_SESSION['board'] = $board;
         }
     }
