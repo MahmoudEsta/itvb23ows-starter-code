@@ -10,7 +10,7 @@ use function PHPUnit\Framework\assertArrayNotHasKey;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertStringContainsString;
 
-class playControllerTest extends TestCase
+class PlayControllerTest extends TestCase
 {
     public function testNoValidPlays()
     {

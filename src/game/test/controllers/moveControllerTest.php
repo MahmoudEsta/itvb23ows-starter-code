@@ -6,11 +6,46 @@ use controllers\MoveController;
 use objects\Board;
 use PHPUnit\Framework\TestCase;
 use test\mocks\DatabaseServiceMock;
+use function PHPUnit\Framework\assertArrayNotHasKey;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertStringContainsString;
+use function PHPUnit\Framework\assertArrayHasKey;
+use function PHPUnit\Framework\assertEquals;
 
-class moveControllerTest extends TestCase
+class MoveControllerTest extends TestCase
 {
+    public function testMoveQueenBug()
+    {
+        $_SESSION = [
+            'last_move' => 1,
+            'game_id' => 12345,
+            'move_number' => 2,
+            'endGame' => false,
+            'player' => 0,
+            'hand' => [
+                0 => ["Q" => 0, "B" => 2, "S" => 2, "A" => 3, "G" => 3]
+            ],
+        ];
+        $boardArray = [
+            '0,0' => [
+                0 => [0, 'Q']
+            ],
+            '1,0' => [
+                0 => [1, 'Q']
+            ],
+        ];
+        $board = new Board($boardArray);
+        $database = new DatabaseServiceMock();
+        $from = '0,0';
+        $to = '0,1';
+        $moveController = new MoveController($from, $to, $board, $database);
+        $moveController->executeMove();
+
+        assertArrayHasKey('0,1', $_SESSION['board']);
+        assertArrayNotHasKey('0,0', $_SESSION['board']);
+        assertEquals(3, $_SESSION['move_number']);
+        assertEquals("0,1", $_SESSION['white_queen']);
+    }
     public function testValidateGrassshopperHappyFlow()
     {
         [$database, $board, $boardArray] = $this->setUpGrassShopper();
