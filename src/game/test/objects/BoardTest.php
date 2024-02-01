@@ -7,9 +7,9 @@ use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-class boardTest extends TestCase
+class BoardTest extends TestCase
 {
-    function testLostGameHappyFlow()
+    public function testLostGameHappyFlow()
     {
         $boardArray = [
             '0,0' => [
@@ -40,7 +40,7 @@ class boardTest extends TestCase
         assertTrue($result);
     }
 
-    function testLostGameBlackPlayerDidNotLose()
+    public function testLostGameBlackPlayerDidNotLose()
     {
         $boardArray = [
             '0,0' => [
